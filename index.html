@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title> MD</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --rose: #c2185b;
+    --rose-light: #f8bbd0;
+    --rose-pale: #fce4ec;
+    --gold: #b8860b;
+    --gold-light: #f5e6c0;
+    --cream: #fdf6f0;
+    --text-dark: #2c1a1a;
+    --text-mid: #5c3d3d;
+    --text-light: #9e7070;
+    --white: #ffffff;
+    --border: rgba(194, 24, 91, 0.15);
+    --shadow: 0 4px 32px rgba(194, 24, 91, 0.08);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Decorative top border ── */
+  .top-stripe {
+    height: 4px;
+    background: linear-gradient(90deg, var(--rose-light), var(--rose), var(--gold), var(--rose), var(--rose-light));
+  }
+
+  /* ── Header ── */
+  header {
+    text-align: center;
+    padding: 2.5rem 1.5rem 1.5rem;
+    position: relative;
+  }
+
+  .bismillah {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+    opacity: 0.85;
+  }
+
+  .profile-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 7vw, 3rem);
+    font-weight: 600;
+    color: var(--text-dark);
+    line-height: 1.1;
+  }
+
+  .profile-tagline {
+    font-size: 0.875rem;
+    color: var(--text-light);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 0.4rem;
+    font-weight: 400;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1.2rem auto;
+    max-width: 220px;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--rose));
+  }
+  .divider::after { background: linear-gradient(90deg, var(--rose), transparent); }
+  .divider-gem {
+    width: 8px; height: 8px;
+    background: var(--rose);
+    transform: rotate(45deg);
+    border-radius: 1px;
+  }
+
+  /* ── Photo Slider ── */
+  .slider-section {
+    padding: 0 1rem 2rem;
+  }
+
+  .slider-container {
+    position: relative;
+    max-width: 480px;
+    margin: 0 auto;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(194, 24, 91, 0.18);
+    aspect-ratio: 3/4;
+    background: #f0dde8;
+  }
+
+  .slides {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.55s cubic-bezier(0.77, 0, 0.175, 1);
+  }
+
+  .slide {
+    min-width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* Placeholder images using gradient patterns */
+  .slide:nth-child(1) { background: linear-gradient(145deg, #d4a0b0 0%, #a0607a 40%, #7a3050 100%); }
+  .slide:nth-child(2) { background: linear-gradient(145deg, #b0c4d4 0%, #607a9a 40%, #304060 100%); }
+  .slide:nth-child(3) { background: linear-gradient(145deg, #b0d4b0 0%, #60906a 40%, #305040 100%); }
+  .slide:nth-child(4) { background: linear-gradient(145deg, #d4c4a0 0%, #a09060 40%, #706030 100%); }
+
+  .slide-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .slide-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .slide-placeholder svg { width: 64px; height: 64px; opacity: 0.5; }
+
+  .slide-placeholder p {
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* Overlay gradient at bottom of slide */
+  .slide-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 40%;
+    background: linear-gradient(to top, rgba(44,26,26,0.55), transparent);
+    pointer-events: none;
+  }
+
+  /* Slide number */
+  .slide-counter {
+    position: absolute;
+    bottom: 1rem; right: 1rem;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(8px);
+    color: white;
+    font-size: 0.78rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 50px;
+    letter-spacing: 0.05em;
+    pointer-events: none;
+  }
+
+  /* Nav arrows */
+  .slider-btn {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    width: 40px; height: 40px;
+    background: rgba(255,255,255,0.88);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+    z-index: 10;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .slider-btn:hover { background: white; transform: translateY(-50%) scale(1.08); }
+  .slider-btn svg { width: 18px; height: 18px; color: var(--rose); }
+  .slider-btn.prev { left: 0.75rem; }
+  .slider-btn.next { right: 0.75rem; }
+
+  /* Dots */
+  .slider-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 1rem;
+  }
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--rose-light);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .dot.active {
+    background: var(--rose);
+    transform: scale(1.3);
+  }
+
+  /* ── Sections ── */
+  .section {
+    padding: 1.5rem 1.25rem;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.45rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    margin-left: 0.25rem;
+  }
+
+  .section-icon {
+    width: 22px; height: 22px;
+    color: var(--rose);
+    flex-shrink: 0;
+  }
+
+  /* ── Quick Stats Card ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .stat-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 0.9rem 0.5rem;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--rose);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.72rem;
+    color: var(--text-light);
+    margin-top: 0.25rem;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Info Rows ── */
+  .info-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .info-row {
+    display: flex;
+    align-items: center;
+    padding: 0.85rem 1rem;
+    gap: 0.9rem;
+    border-bottom: 1px solid rgba(194, 24, 91, 0.07);
+  }
+
+  .info-row:last-child { border-bottom: none; }
+
+  .info-icon {
+    width: 34px; height: 34px;
+    background: var(--rose-pale);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .info-icon svg { width: 16px; height: 16px; color: var(--rose); }
+
+  .info-label {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .info-value {
+    font-size: 0.925rem;
+    color: var(--text-dark);
+    font-weight: 500;
+    margin-top: 1px;
+  }
+
+  /* ── About ── */
+  .about-box {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.1rem 1.1rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .about-box::before {
+    content: '"';
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 7rem;
+    color: var(--rose-pale);
+    position: absolute;
+    top: -1.5rem; left: 0.5rem;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .about-text {
+    font-size: 0.925rem;
+    color: var(--text-mid);
+    line-height: 1.75;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Education & Career ── */
+  .timeline {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .timeline-item {
+    display: flex;
+    gap: 0.9rem;
+    padding: 1rem 1rem;
+    border-bottom: 1px solid rgba(194, 24, 91, 0.07);
+    align-items: flex-start;
+  }
+
+  .timeline-item:last-child { border-bottom: none; }
+
+  .timeline-dot {
+    width: 10px; height: 10px;
+    background: var(--rose);
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  .timeline-title {
+    font-size: 0.925rem;
+    font-weight: 500;
+    color: var(--text-dark);
+  }
+
+  .timeline-sub {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-top: 2px;
+  }
+
+  /* ── Family Section ── */
+  .family-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .family-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 0.9rem;
+    text-align: center;
+  }
+
+  .family-icon {
+    width: 40px; height: 40px;
+    background: var(--rose-pale);
+    border-radius: 50%;
+    margin: 0 auto 0.6rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .family-icon svg { width: 20px; height: 20px; color: var(--rose); }
+  .family-role { font-size: 0.72rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.04em; }
+  .family-name { font-size: 0.875rem; font-weight: 500; color: var(--text-dark); margin-top: 2px; }
+
+  /* ── Expectations ── */
+  .expectations-list {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .expectation-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 0.875rem;
+    color: var(--text-mid);
+  }
+
+  .check {
+    width: 20px; height: 20px;
+    background: var(--rose-pale);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .check svg { width: 11px; height: 11px; color: var(--rose); }
+
+  /* ── Contact ── */
+  .contact-section {
+    padding: 1.5rem 1.25rem 3rem;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .contact-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+
+  .contact-card p {
+    font-size: 0.875rem;
+    color: var(--text-light);
+    margin-bottom: 1.2rem;
+    line-height: 1.6;
+  }
+
+  .contact-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--rose);
+    color: white;
+    padding: 0.75rem 1.75rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+  .contact-btn:hover { opacity: 0.9; transform: scale(1.02); }
+  .contact-btn svg { width: 18px; height: 18px; }
+
+  .wali-note {
+    margin-top: 1rem;
+    font-size: 0.78rem;
+    color: var(--text-light);
+    font-style: italic;
+  }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.78rem;
+    color: var(--text-light);
+    letter-spacing: 0.04em;
+  }
+
+  /* Fade in animation */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section, .slider-section, header, .contact-section {
+    animation: fadeUp 0.6s ease both;
+  }
+
+  header { animation-delay: 0s; }
+  .slider-section { animation-delay: 0.1s; }
+  .section:nth-of-type(1) { animation-delay: 0.15s; }
+  .section:nth-of-type(2) { animation-delay: 0.2s; }
+  .section:nth-of-type(3) { animation-delay: 0.25s; }
+  .section:nth-of-type(4) { animation-delay: 0.3s; }
+  .section:nth-of-type(5) { animation-delay: 0.35s; }
+  .contact-section { animation-delay: 0.4s; }
+</style>
+</head>
+<body>
+
+<div class="top-stripe"></div>
+
+<!-- Header -->
+<header>
+  <div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+  <h1 class="profile-name">Muhammad Danish</h1>
+  <!-- <p class="profile-tagline">Rishta Profile · 2025</p> -->
+  <div class="divider"><div class="divider-gem"></div></div>
+</header>
+
+<!-- Photo Slider -->
+<div class="slider-section">
+  <div class="slider-container" id="sliderContainer">
+    <div class="slides" id="slides">
+
+      <!-- Slide 1 -->
+      <div class="slide">
+		<img src="assert/m1.jpeg" alt="My Profile Photo" class="slide-photo">
+        <div class="slide-overlay"></div>
+      </div>
+
+      <!-- Slide 2 -->
+      <div class="slide">
+		<img src="assert/m7.jpeg" alt="My Profile Photo" class="slide-photo">
+        <div class="slide-overlay"></div>
+      </div>
+
+      <!-- Slide 3 -->
+      <div class="slide">
+        <img src="assert/m14.jpeg" alt="My Profile Photo" class="slide-photo">
+        <div class="slide-overlay"></div>
+      </div>
+
+      <!-- Slide 4 -->
+      <div class="slide">
+		<img src="assert/m4.jpeg" alt="My Profile Photo" class="slide-photo">
+        <div class="slide-overlay"></div>
+      </div>	  
+    </div>
+
+    <button class="slider-btn prev" id="prevBtn" aria-label="Previous photo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
+    <button class="slider-btn next" id="nextBtn" aria-label="Next photo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <polyline points="9 18 15 12 9 6"/>
+      </svg>
+    </button>
+
+    <div class="slide-counter" id="counter">1 / 4</div>
+  </div>
+
+  <div class="slider-dots" id="dots">
+    <button class="dot active" data-idx="0" aria-label="Photo 1"></button>
+    <button class="dot" data-idx="1" aria-label="Photo 2"></button>
+    <button class="dot" data-idx="2" aria-label="Photo 3"></button>
+    <button class="dot" data-idx="3" aria-label="Photo 4"></button>
+  </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="section">
+  <h2 class="section-title">
+    <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+    </svg>
+    At a Glance
+  </h2>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-value">27</div>
+      <div class="stat-label">Age</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">5'7</div>
+      <div class="stat-label">Height</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">Slim</div>
+      <div class="stat-label">Build</div>
+    </div>
+  </div>
+</div>
+
+<!-- Personal Info -->
+<div class="section">
+  <h2 class="section-title">
+    <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+    </svg>
+    Personal Details
+  </h2>
+  <div class="info-card">
+    <div class="info-row">
+      <div class="info-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>
+      </div>
+      <div>
+        <div class="info-label">City</div>
+        <div class="info-value">Lahore, Punjab</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="info-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+      </div>
+      <div>
+        <div class="info-label">Caste / Biradari</div>
+        <div class="info-value">Arain (آرائین)</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="info-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div>
+        <div class="info-label">Religion</div>
+        <div class="info-value">Muslim (Sunni)</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="info-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      </div>
+      <div>
+        <div class="info-label">Marital Status</div>
+        <div class="info-value">Never Married</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- About Me -->
+<div class="section">
+  <h2 class="section-title">
+    <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <path d="M20 14.66V20a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2h5.34"/><polygon points="18 2 22 6 12 16 8 16 8 12 18 2"/>
+    </svg>
+    About Me
+  </h2>
+  <div class="about-box">
+    <p class="about-text">
+		I am a simple, respectful, and family-oriented person from Lahore. I strongly believe in honesty, loyalty, and maintaining strong family values.
+		I enjoy meaningful conversations, spending quality time with family, and continuously working on personal and professional growth.
+        I am looking for a life partner who is kind-hearted, understanding, and values family relationships as much as I do.
+    </p>
+  </div>
+</div>
+
+<!-- Education & Career -->
+<div class="section">
+  <h2 class="section-title">
+    <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+    </svg>
+    Education &amp; Career
+  </h2>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div>
+        <div class="timeline-title">Software Engineer</div>
+        <div class="timeline-sub"></div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div>
+        <div class="timeline-title">BS Computer Science</div>
+        <div class="timeline-sub"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Family Background -->
+<div class="section">
+  <h2 class="section-title">
+    <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+    </svg>
+    Family Background
+  </h2>
+  <div class="family-grid">
+    <div class="family-card">
+      <div class="family-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      </div>
+      <div class="family-role">Father</div>
+      <div class="family-name">Agriculture (Farming)</div>
+    </div>
+    <div class="family-card">
+      <div class="family-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      </div>
+      <div class="family-role">Mother</div>
+      <div class="family-name">Housewife</div>
+    </div>
+    <div class="family-card">
+      <div class="family-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      </div>
+      <div class="family-role">Siblings</div>
+      <div class="family-name">2 Brothers, 1 Sister</div>
+    </div>
+    <div class="family-card">
+      <div class="family-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <div class="family-role">Residence</div>
+      <div class="family-name">Lahore Cantt</div>
+    </div>
+  </div>
+</div>
+
+<!-- Expectations -->
+<div class="section">
+  <h2 class="section-title">
+    <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+    </svg>
+    What I'm Looking For
+  </h2>
+  <div class="expectations-list">
+    <div class="expectation-pill">
+      <div class="check">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      Practicing Muslim with good character
+    </div>
+    <div class="expectation-pill">
+      <div class="check">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      Age 20–25, educated (Graduate or above)
+    </div>
+    <div class="expectation-pill">
+      <div class="check">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      Family-oriented and respectful to elders
+    </div>
+    <div class="expectation-pill">
+      <div class="check">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+       Emotionally mature and responsible
+    </div>
+  </div>
+</div>
+
+<!-- Contact -->
+<div class="contact-section">
+  <div class="section-title" style="max-width: 100%;">
+    <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11.5 19.79 19.79 0 0100 2.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+    </svg>
+    Get in Touch
+  </div>
+  <div class="contact-card">
+    <p>
+      All inquiries are welcome through Wali (Guardian). Please reach out with your family profile. we will respond promptly, In Sha Allah.
+    </p>
+    <a href="tel:+923064239266" class="contact-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11.5 19.79 19.79 0 0100 2.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      +92 306 4239266
+    </a>
+    <p class="wali-note">Contact via Wali only · Serious inquiries please</p>
+  </div>
+</div>
+
+<footer>
+  Made with <span style="color:red;">♥</span> By MD
+</footer>
+
+<script>
+  const slides = document.getElementById('slides');
+  const dots = document.querySelectorAll('.dot');
+  const counter = document.getElementById('counter');
+  const total = 4;
+  let current = 0;
+
+  function goTo(idx) {
+    current = (idx + total) % total;
+    slides.style.transform = `translateX(-${current * 100}%)`;
+    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    counter.textContent = `${current + 1} / ${total}`;
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+  document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+  dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.idx)));
+
+  // Touch swipe
+  let startX = 0;
+  const container = document.getElementById('sliderContainer');
+  container.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+  container.addEventListener('touchend', e => {
+    const diff = startX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) goTo(current + (diff > 0 ? 1 : -1));
+  });
+
+  // Auto-play
+  setInterval(() => goTo(current + 1), 4000);
+</script>
+</body>
+</html>
